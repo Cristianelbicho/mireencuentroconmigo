@@ -101,7 +101,7 @@
       left: -10%;
       width: 60vw;                    /* 60% del ancho de la pantalla */
       height: 60vw;
-      background: radial-gradient(circle, rgba(79, 195, 247, 0.12) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(79, 138, 255, 0.12) 0%, transparent 70%);
       /* radial-gradient: degradado circular desde el centro hacia afuera */
       border-radius: 50%;             /* Forma circular */
       pointer-events: none;           /* No bloquea clics */
@@ -171,14 +171,14 @@
        Contenedor circular para la imagen o iniciales del consultorio.
     ─────────────────────────────────────────────────────────────── */
     .logo-contenedor {
-      width: 150px;
-      height: 110px;
+      width: 250px;
+      height: 190px;
       margin: 0 auto 20px;            /* auto en los lados = centrado horizontal */
       border-radius: 50%;             /* Forma circular perfecta */
       overflow: hidden;               /* Recorta la imagen en forma circular */
       border: 2px solid var(--color-acento);
-      box-shadow: 0 0 24px rgba(79, 195, 247, 0.25); /* Resplandor azul */
-      background: rgba(79, 195, 247, 0.1);
+      box-shadow: 0 0 24px rgba(255, 255, 255, 0.943); /* Resplandor azul */
+      background: rgba(255, 255, 255, 0.973);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -198,7 +198,7 @@
     /* Iniciales del consultorio como fallback si no hay imagen */
     .logo-iniciales {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 36px;
+      font-size: 40px;
       font-weight: 700;
       color: var(--color-acento);
       letter-spacing: 2px;
@@ -390,7 +390,7 @@
     .footer {
       margin-top: 28px;
       font-size: 11px;
-      color: rgba(255, 255, 255, 0.25);
+      color: rgb(255, 255, 255);
       letter-spacing: 1.5px;
       text-transform: uppercase;
       text-align: center;
@@ -441,7 +441,7 @@
       <!-- <img class="logo" src="./logo.png" alt="Logo del consultorio"> -->
 
       <!-- OPCIÓN B - iniciales: cambia "MC" por las tuyas -->
-      <span class="logo-iniciales"><img src="logo consul.png" width="100"></span>
+      <span class="logo-iniciales"><img src="logo consul.png" width="170"></span>
     </div>
 
     <!-- Línea decorativa bajo el logo -->
