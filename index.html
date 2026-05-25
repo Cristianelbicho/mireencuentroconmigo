@@ -53,7 +53,7 @@
       --color-texto: #ffffff;          /* Color del texto principal */
       --color-subtexto: rgba(255, 255, 255, 0.55); /* Color del subtítulo */
       --color-acento: #4fc3f7;         /* Color azul claro para detalles y hover */
-      --color-boton-bg: rgb(244, 171, 248); /* Fondo de cada botón */
+      --color-boton-bg: rgb(0, 0, 0); /* Fondo de cada botón */
       --color-boton-hover: rgba(79, 195, 247, 0.15); /* Fondo al pasar el cursor */
       --color-boton-borde: rgba(255, 255, 255, 0.12); /* Borde de los botones */
       --radio-boton: 50px;             /* Qué tan redondeadas son las esquinas de los botones */
@@ -177,8 +177,8 @@
       border-radius: 50%;             /* Forma circular perfecta */
       overflow: hidden;               /* Recorta la imagen en forma circular */
       border: 2px solid var(--color-acento);
-      box-shadow: 0 0 24px rgba(255, 255, 255, 0.943); /* Resplandor azul */
-      background: rgba(255, 255, 255, 0.973);
+      box-shadow: 0 0 24px rgb(255, 174, 255); /* Resplandor azul */
+      background: #7ad0f8;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -322,6 +322,7 @@
     .btn-texto {
       flex: 1;                        /* Ocupa todo el espacio disponible */
       text-align: left;
+      color: white;
     }
 
     /* Flecha indicadora de que el botón lleva a otro lado */
