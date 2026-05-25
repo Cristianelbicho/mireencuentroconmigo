@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║            TARJETA DIGITAL - CONSULTORIO MÉDICO              ║
+  ║  Desarrollada para editar fácilmente en Visual Studio Code   ║
+  ╚══════════════════════════════════════════════════════════════╝
+
+  INSTRUCCIONES PARA PERSONALIZAR:
+  1. Cambia "NOMBRE DEL CONSULTORIO" por el nombre real
+  2. Cambia "Tu especialidad o slogan aquí" por lo que corresponda
+  3. En cada botón, reemplaza los links (href) con tus redes reales
+  4. Cambia la imagen de fondo en la sección :root > --bg-image (o usa color)
+  5. Puedes cambiar el logo en la etiqueta <img class="logo">
+
+  ESTRUCTURA DEL ARCHIVO:
+  - HEAD: fuentes de Google, estilos CSS
+  - BODY: estructura visual (logo, nombre, botones)
+  - SCRIPT: animaciones de entrada con JavaScript
+-->
+
+<head>
+  <meta charset="UTF-8" />
+
+  <!-- Permite que la tarjeta se vea bien en pantallas de celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Título que aparece en la pestaña del navegador -->
+  <title>Tarjeta Digital - Consultorio</title>
+
+  <!--
+    FUENTES DE GOOGLE:
+    - "Cormorant Garamond": fuente elegante para el nombre del consultorio
+    - "DM Sans": fuente moderna y legible para los botones y subtítulos
+    Estas se cargan desde internet; si no hay conexión, usa fuentes del sistema.
+  -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ─────────────────────────────────────────────────────────────
+       VARIABLES GLOBALES (CSS Custom Properties)
+       Aquí defines los colores y valores que se repiten en toda la
+       tarjeta. Para cambiar el tema de color, solo edita aquí.
+    ─────────────────────────────────────────────────────────────── */
+    :root {
+      --color-fondo: #0a0f1e;          /* Fondo principal oscuro (azul muy oscuro) */
+      --color-tarjeta: rgba(255, 255, 255, 0.04); /* Fondo semitransparente de la tarjeta */
+      --color-borde: rgba(255, 255, 255, 0.10);   /* Borde sutil de cristal */
+      --color-texto: #ffffff;          /* Color del texto principal */
+      --color-subtexto: rgba(255, 255, 255, 0.55); /* Color del subtítulo */
+      --color-acento: #4fc3f7;         /* Color azul claro para detalles y hover */
+      --color-boton-bg: rgba(255, 255, 255, 0.07); /* Fondo de cada botón */
+      --color-boton-hover: rgba(79, 195, 247, 0.15); /* Fondo al pasar el cursor */
+      --color-boton-borde: rgba(255, 255, 255, 0.12); /* Borde de los botones */
+      --radio-boton: 50px;             /* Qué tan redondeadas son las esquinas de los botones */
+      --sombra-suave: 0 8px 32px rgba(0, 0, 0, 0.4); /* Sombra para profundidad */
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       RESET GENERAL
+       Elimina márgenes y rellenos que los navegadores ponen por
+       defecto. Garantiza que todo se calcule desde cero.
+    ─────────────────────────────────────────────────────────────── */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box; /* El padding y borde NO aumentan el tamaño del elemento */
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       BODY (Contenedor raíz de la página)
+       Centra todo verticalmente y horizontalmente.
+       min-height: 100vh = ocupa al menos toda la pantalla en altura.
+    ─────────────────────────────────────────────────────────────── */
+    body {
+      background-color: var(--color-fondo);
+      min-height: 100vh;              /* Altura mínima = 100% del viewport */
+      display: flex;                  /* Activa el modo flex para centrar */
+      align-items: center;            /* Centra verticalmente */
+      justify-content: center;        /* Centra horizontalmente */
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;             /* Evita scroll horizontal */
+      padding: 24px 16px;             /* Espacio en los bordes en pantallas pequeñas */
+      position: relative;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       FONDO DECORATIVO (Orbes de color)
+       Son círculos con blur que crean el efecto de profundidad.
+       Están fijos en la pantalla y no se mueven al hacer scroll.
+       pointer-events: none = no interfieren con el clic del usuario.
+    ─────────────────────────────────────────────────────────────── */
+    body::before {
+      content: '';                    /* Elemento vacío generado por CSS */
+      position: fixed;                /* Fijo en la pantalla */
+      top: -20%;
+      left: -10%;
+      width: 60vw;                    /* 60% del ancho de la pantalla */
+      height: 60vw;
+      background: radial-gradient(circle, rgba(79, 195, 247, 0.12) 0%, transparent 70%);
+      /* radial-gradient: degradado circular desde el centro hacia afuera */
+      border-radius: 50%;             /* Forma circular */
+      pointer-events: none;           /* No bloquea clics */
+      z-index: 0;                     /* Detrás de todo el contenido */
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -10%;
+      right: -10%;
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, rgba(156, 39, 176, 0.10) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       TARJETA PRINCIPAL
+       Es el contenedor blanco-cristalino que contiene todo.
+       "Glassmorphism": efecto de vidrio esmerilado con:
+         - backdrop-filter: blur → desenfoca lo que está detrás
+         - fondo semitransparente
+         - borde con ligera opacidad
+    ─────────────────────────────────────────────────────────────── */
+    .tarjeta {
+      position: relative;
+      z-index: 1;                     /* Encima del fondo decorativo */
+      width: 100%;
+      max-width: 400px;               /* Ancho máximo para que no se vea raro en desktop */
+      background: var(--color-tarjeta);
+      backdrop-filter: blur(20px);    /* Desenfoca el fondo detrás de la tarjeta */
+      -webkit-backdrop-filter: blur(20px); /* Versión para Safari (Apple) */
+      border: 1px solid var(--color-borde);
+      border-radius: 28px;            /* Esquinas muy redondeadas */
+      padding: 44px 32px 40px;
+      box-shadow: var(--sombra-suave);
+      text-align: center;
+
+      /* ANIMACIÓN DE ENTRADA: empieza invisible y desde arriba */
+      opacity: 0;
+      transform: translateY(30px);    /* translateY: mueve en el eje vertical */
+      animation: entradaTarjeta 0.7s ease forwards; /* forwards = mantiene el estado final */
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       KEYFRAME: entradaTarjeta
+       Define los estados de la animación de entrada de la tarjeta.
+       @keyframes = fotogramas clave (como en una animación de video)
+       from = estado inicial (0%)  |  to = estado final (100%)
+    ─────────────────────────────────────────────────────────────── */
+    @keyframes entradaTarjeta {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);     /* Vuelve a su posición normal */
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       ÁREA DEL LOGO
+       Contenedor circular para la imagen o iniciales del consultorio.
+    ─────────────────────────────────────────────────────────────── */
+    .logo-contenedor {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 20px;            /* auto en los lados = centrado horizontal */
+      border-radius: 50%;             /* Forma circular perfecta */
+      overflow: hidden;               /* Recorta la imagen en forma circular */
+      border: 2px solid var(--color-acento);
+      box-shadow: 0 0 24px rgba(79, 195, 247, 0.25); /* Resplandor azul */
+      background: rgba(79, 195, 247, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /*
+      LOGO como imagen:
+      Descomenta <img class="logo"> en el HTML y agrega aquí la ruta.
+      Si no tienes imagen, se muestran las iniciales (ver .logo-iniciales).
+    */
+    .logo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;              /* Recorta la imagen para llenar el círculo */
+    }
+
+    /* Iniciales del consultorio como fallback si no hay imagen */
+    .logo-iniciales {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--color-acento);
+      letter-spacing: 2px;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       LÍNEA DECORATIVA (separador)
+       Pequeña línea bajo el logo para dar estructura visual.
+    ─────────────────────────────────────────────────────────────── */
+    .separador {
+      width: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--color-acento), transparent);
+      /* linear-gradient: degradado lineal de izquierda a derecha */
+      margin: 0 auto 18px;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       NOMBRE DEL CONSULTORIO
+       Tipografía elegante para el nombre principal.
+       letter-spacing: espacio entre letras (más = más elegante)
+    ─────────────────────────────────────────────────────────────── */
+    .nombre {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(22px, 6vw, 28px); /* clamp(mín, ideal, máx): escala con la pantalla */
+      font-weight: 700;
+      color: var(--color-texto);
+      letter-spacing: 1.5px;
+      line-height: 1.2;               /* Interlineado */
+      margin-bottom: 8px;
+      text-transform: uppercase;      /* Todo en mayúsculas */
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       ESPECIALIDAD / SLOGAN
+       Texto pequeño bajo el nombre principal.
+    ─────────────────────────────────────────────────────────────── */
+    .especialidad {
+      font-size: 13px;
+      color: var(--color-subtexto);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       CONTENEDOR DE BOTONES
+       Agrupa todos los botones en columna con espacio entre ellos.
+       gap: espacio entre elementos hijos (más limpio que margin)
+    ─────────────────────────────────────────────────────────────── */
+    .botones {
+      display: flex;
+      flex-direction: column;         /* Apila los botones uno sobre otro */
+      gap: 12px;                      /* 12px de espacio entre cada botón */
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       BOTÓN BASE
+       Estilos que comparten TODOS los botones.
+       Cada botón es un enlace <a> estilizado para verse como botón.
+    ─────────────────────────────────────────────────────────────── */
+    .btn {
+      display: flex;
+      align-items: center;            /* Centra ícono y texto verticalmente */
+      gap: 14px;                      /* Espacio entre el ícono y el texto */
+      padding: 14px 22px;
+      background: var(--color-boton-bg);
+      border: 1px solid var(--color-boton-borde);
+      border-radius: var(--radio-boton);
+      text-decoration: none;          /* Quita el subrayado de los links */
+      color: var(--color-texto);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      cursor: pointer;                /* Cursor de mano al pasar por encima */
+
+      /* TRANSICIÓN: cuando cambia el fondo/borde, lo hace suavemente en 0.25s */
+      transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+
+      /* ANIMACIÓN INICIAL: empieza invisible, se activa por JavaScript */
+      opacity: 0;
+      transform: translateX(-20px);   /* Empieza 20px a la izquierda */
+    }
+
+    /* Estado HOVER: cuando el cursor pasa por encima del botón */
+    .btn:hover {
+      background: var(--color-boton-hover);
+      border-color: var(--color-acento);
+      transform: translateX(4px);     /* Se mueve 4px a la derecha al hacer hover */
+    }
+
+    /* Estado ACTIVE: cuando el usuario hace clic */
+    .btn:active {
+      transform: scale(0.97);         /* Se encoge ligeramente al hacer clic */
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       ÍCONO DEL BOTÓN
+       Círculo pequeño que contiene el SVG del ícono.
+       min-width: evita que el círculo se aplaste si el texto es largo.
+    ─────────────────────────────────────────────────────────────── */
+    .btn-icono {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;                /* No se achica aunque haya poco espacio */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-icono svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Texto del botón (nombre: WhatsApp, Facebook, etc.) */
+    .btn-texto {
+      flex: 1;                        /* Ocupa todo el espacio disponible */
+      text-align: left;
+    }
+
+    /* Flecha indicadora de que el botón lleva a otro lado */
+    .btn-flecha {
+      font-size: 18px;
+      opacity: 0.4;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    /* La flecha se ilumina y avanza al hacer hover */
+    .btn:hover .btn-flecha {
+      opacity: 0.9;
+      transform: translateX(3px);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       COLORES INDIVIDUALES POR RED SOCIAL
+       Cada botón tiene su color de acento personalizado.
+       El color se aplica al ícono y al borde del círculo de ícono.
+    ─────────────────────────────────────────────────────────────── */
+
+    /* WhatsApp: verde */
+    .btn-whatsapp .btn-icono {
+      background: rgba(37, 211, 102, 0.15);
+      border: 1px solid rgba(37, 211, 102, 0.3);
+    }
+    .btn-whatsapp .btn-icono svg { color: #25d366; }
+    .btn-whatsapp:hover { border-color: rgba(37, 211, 102, 0.5); }
+
+    /* Facebook: azul */
+    .btn-facebook .btn-icono {
+      background: rgba(24, 119, 242, 0.15);
+      border: 1px solid rgba(24, 119, 242, 0.3);
+    }
+    .btn-facebook .btn-icono svg { color: #1877f2; }
+    .btn-facebook:hover { border-color: rgba(24, 119, 242, 0.5); }
+
+    /* Instagram: degradado rosa/naranja */
+    .btn-instagram .btn-icono {
+      background: rgba(225, 48, 108, 0.12);
+      border: 1px solid rgba(225, 48, 108, 0.3);
+    }
+    .btn-instagram .btn-icono svg { color: #e1306c; }
+    .btn-instagram:hover { border-color: rgba(225, 48, 108, 0.5); }
+
+    /* Ubicación: rojo/coral */
+    .btn-ubicacion .btn-icono {
+      background: rgba(255, 82, 82, 0.12);
+      border: 1px solid rgba(255, 82, 82, 0.3);
+    }
+    .btn-ubicacion .btn-icono svg { color: #ff5252; }
+    .btn-ubicacion:hover { border-color: rgba(255, 82, 82, 0.5); }
+
+    /* Teléfono: verde azulado */
+    .btn-telefono .btn-icono {
+      background: rgba(0, 200, 190, 0.12);
+      border: 1px solid rgba(0, 200, 190, 0.3);
+    }
+    .btn-telefono .btn-icono svg { color: #00c8be; }
+    .btn-telefono:hover { border-color: rgba(0, 200, 190, 0.5); }
+
+    /* ─────────────────────────────────────────────────────────────
+       PIE DE LA TARJETA
+       Texto pequeño al final, para créditos, horario, etc.
+    ─────────────────────────────────────────────────────────────── */
+    .footer {
+      margin-top: 28px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.25);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       RESPONSIVE: pantallas muy pequeñas (menos de 360px)
+       Reduce el padding para que no se corte el contenido.
+    ─────────────────────────────────────────────────────────────── */
+    @media (max-width: 360px) {
+      .tarjeta {
+        padding: 36px 20px 32px;
+      }
+      .btn {
+        padding: 12px 16px;
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       CLASE UTILITARIA: .visible
+       JavaScript agrega esta clase a cada botón para animarlos.
+       Cuando el botón tiene .visible, pasa de invisible a visible.
+    ─────────────────────────────────────────────────────────────── */
+    .btn.visible {
+      opacity: 1;
+      transform: translateX(0);       /* Regresa a su posición normal */
+      transition: opacity 0.5s ease, transform 0.5s ease,
+                  background 0.25s ease, border-color 0.25s ease;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TARJETA PRINCIPAL
+       Aquí va todo el contenido visible al usuario.
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="tarjeta">
+
+    <!-- ── LOGO ──────────────────────────────────────────────────
+         OPCIÓN A: Imagen (descomenta la línea <img> y ajusta src)
+         OPCIÓN B: Iniciales (edita el texto dentro de logo-iniciales)
+    ─────────────────────────────────────────────────────────── -->
+    <div class="logo-contenedor">
+      <!-- OPCIÓN A - imagen: quita el comentario y pon tu ruta -->
+      <!-- <img class="logo" src="./logo.png" alt="Logo del consultorio"> -->
+
+      <!-- OPCIÓN B - iniciales: cambia "MC" por las tuyas -->
+      <span class="logo-iniciales">MC</span>
+    </div>
+
+    <!-- Línea decorativa bajo el logo -->
+    <div class="separador"></div>
+
+    <!-- ── NOMBRE DEL CONSULTORIO ─────────────────────────────── -->
+    <!-- Cambia este texto por el nombre real del consultorio -->
+    <h1 class="nombre">Consultorio Psicologíco</h1>
+
+    <!-- ── ESPECIALIDAD O SLOGAN ─────────────────────────────── -->
+    <!-- Cambia este texto por la especialidad o slogan -->
+    <p class="especialidad">Mi reencuentro conmigo</p>
+
+    <!-- ── BOTONES DE CONTACTO ───────────────────────────────────
+         Cada <a> es un botón que lleva a una red social o acción.
+         href = la dirección a donde lleva el botón:
+           - WhatsApp: https://wa.me/521XXXXXXXXXX (10 dígitos)
+           - Facebook:  https://facebook.com/tu-pagina
+           - Instagram: https://instagram.com/tu-usuario
+           - Ubicación: https://maps.google.com/?q=tu+dirección
+           - Teléfono:  tel:+521XXXXXXXXXX
+         target="_blank" = abre en pestaña nueva
+    ─────────────────────────────────────────────────────────── -->
+    <div class="botones">
+
+      <!-- BOTÓN WHATSAPP -->
+      <a href="https://wa.me/5212461266279" target="_blank" class="btn btn-whatsapp">
+        <span class="btn-icono">
+          <!-- Ícono SVG de WhatsApp (inline, no necesita archivo externo) -->
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+          </svg>
+        </span>
+        <span class="btn-texto">WhatsApp</span>
+        <span class="btn-flecha">›</span>
+      </a>
+
+      <!-- BOTÓN FACEBOOK -->
+      <a href="https://www.facebook.com/profile.php?id=61558661152625" target="_blank" class="btn btn-facebook">
+        <span class="btn-icono">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </span>
+        <span class="btn-texto">Facebook</span>
+        <span class="btn-flecha">›</span>
+      </a>
+
+      <!-- BOTÓN INSTAGRAM -->
+      <a href="https://www.instagram.com/psic.anafer/" target="_blank" class="btn btn-instagram">
+        <span class="btn-icono">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/>
+          </svg>
+        </span>
+        <span class="btn-texto">Instagram</span>
+        <span class="btn-flecha">›</span>
+      </a>
+
+      <!-- BOTÓN UBICACIÓN (abre Google Maps) -->
+      <a href="https://www.google.com/maps/place/Consultorio+Psicol%C3%B3gico+%22Mi+reencuentro+conmigo%22/@19.4157272,-98.142917,17z/data=!3m1!4b1!4m6!3m5!1s0x85d0210079f173c7:0xdcb3c986d659f71a!8m2!3d19.4157272!4d-98.142917!16s%2Fg%2F11yf82sh0r?entry=ttu&g_ep=EgoyMDI2MDUyMC4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="btn btn-ubicacion">
+        <span class="btn-icono">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+        </span>
+        <span class="btn-texto">Ubicación</span>
+        <span class="btn-flecha">›</span>
+      </a>
+
+      <!-- BOTÓN TELÉFONO (marca el número al tocar en celular) -->
+      <a href="tel:+522461266279" class="btn btn-telefono">
+        <span class="btn-icono">
+          <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+        </span>
+        <span class="btn-texto">Llamar</span>
+        <span class="btn-flecha">›</span>
+      </a>
+
+    </div>
+    <!-- /botones -->
+
+    <!-- ── PIE DE TARJETA ─────────────────────────────────────── -->
+    <!-- Puedes poner horario, dirección corta, o borrarlo si no lo necesitas -->
+    <p class="footer">Lun – Vie &nbsp;·&nbsp; 9:00 – 18:00</p>
+
+  </div>
+  <!-- /tarjeta -->
+
+
+  <!-- ═══════════════════════════════════════════════════════════
+       JAVASCRIPT: Animaciones de entrada escalonadas
+       Se ejecuta cuando el HTML ya está cargado (DOMContentLoaded).
+       Anima cada botón con un retraso incremental para que entren
+       uno por uno en lugar de todos al mismo tiempo.
+  ═══════════════════════════════════════════════════════════ -->
+  <script>
+
+    /*
+      DOMContentLoaded: el evento que se dispara cuando el navegador
+      terminó de leer y construir todo el HTML.
+      Siempre hay que esperar este evento antes de manipular elementos.
+    */
+    document.addEventListener('DOMContentLoaded', () => {
+
+      /*
+        querySelectorAll('.btn') devuelve una NodeList (lista) con
+        TODOS los elementos que tengan la clase .btn en la página.
+      */
+      const botones = document.querySelectorAll('.btn');
+
+      /*
+        forEach recorre cada botón de la lista.
+        - boton: el elemento actual
+        - indice: su posición (0, 1, 2, 3...)
+      */
+      botones.forEach((boton, indice) => {
+
+        /*
+          setTimeout ejecuta una función después de un tiempo.
+          El retraso = 600ms base + 120ms por cada botón.
+          Así el 1er botón aparece a los 600ms,
+               el 2do a los 720ms,
+               el 3ro a los 840ms... etc.
+          Esto crea el efecto "cascada" de entrada.
+        */
+        setTimeout(() => {
+
+          /*
+            classList.add('visible') agrega la clase CSS .visible al botón.
+            Esa clase tiene "opacity: 1" y "transform: translateX(0)",
+            así que el botón pasa de invisible a visible con transición suave.
+          */
+          boton.classList.add('visible');
+
+        }, 600 + indice * 120); // Retraso en milisegundos (1000ms = 1 segundo)
+
+      });
+
+    });
+
+  </script>
+
+</body>
+</html>
