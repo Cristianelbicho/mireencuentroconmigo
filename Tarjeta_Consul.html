@@ -47,13 +47,13 @@
        tarjeta. Para cambiar el tema de color, solo edita aquí.
     ─────────────────────────────────────────────────────────────── */
     :root {
-      --color-fondo: #0a0f1e;          /* Fondo principal oscuro (azul muy oscuro) */
+      --color-fondo: #65c6f0;          /* Fondo principal oscuro (azul muy oscuro) */
       --color-tarjeta: rgba(255, 255, 255, 0.04); /* Fondo semitransparente de la tarjeta */
       --color-borde: rgba(255, 255, 255, 0.10);   /* Borde sutil de cristal */
       --color-texto: #ffffff;          /* Color del texto principal */
       --color-subtexto: rgba(255, 255, 255, 0.55); /* Color del subtítulo */
       --color-acento: #4fc3f7;         /* Color azul claro para detalles y hover */
-      --color-boton-bg: rgba(255, 255, 255, 0.07); /* Fondo de cada botón */
+      --color-boton-bg: rgb(244, 171, 248); /* Fondo de cada botón */
       --color-boton-hover: rgba(79, 195, 247, 0.15); /* Fondo al pasar el cursor */
       --color-boton-borde: rgba(255, 255, 255, 0.12); /* Borde de los botones */
       --radio-boton: 50px;             /* Qué tan redondeadas son las esquinas de los botones */
@@ -171,8 +171,8 @@
        Contenedor circular para la imagen o iniciales del consultorio.
     ─────────────────────────────────────────────────────────────── */
     .logo-contenedor {
-      width: 96px;
-      height: 96px;
+      width: 150px;
+      height: 110px;
       margin: 0 auto 20px;            /* auto en los lados = centrado horizontal */
       border-radius: 50%;             /* Forma circular perfecta */
       overflow: hidden;               /* Recorta la imagen en forma circular */
@@ -202,6 +202,7 @@
       font-weight: 700;
       color: var(--color-acento);
       letter-spacing: 2px;
+      
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -392,6 +393,7 @@
       color: rgba(255, 255, 255, 0.25);
       letter-spacing: 1.5px;
       text-transform: uppercase;
+      text-align: center;
     }
 
     /* ─────────────────────────────────────────────────────────────
@@ -439,7 +441,7 @@
       <!-- <img class="logo" src="./logo.png" alt="Logo del consultorio"> -->
 
       <!-- OPCIÓN B - iniciales: cambia "MC" por las tuyas -->
-      <span class="logo-iniciales">MC</span>
+      <span class="logo-iniciales"><img src="logo consul.png" width="100"></span>
     </div>
 
     <!-- Línea decorativa bajo el logo -->
@@ -526,7 +528,10 @@
 
     <!-- ── PIE DE TARJETA ─────────────────────────────────────── -->
     <!-- Puedes poner horario, dirección corta, o borrarlo si no lo necesitas -->
-    <p class="footer">Lun – Vie &nbsp;·&nbsp; 9:00 – 18:00</p>
+    <p class="footer">
+         Lun – Vie &nbsp;·&nbsp; 6:00pm – 9:00pm<br>
+         Sab &nbsp;·&nbsp; 1:00pm – 6:00pm
+  </p>
 
   </div>
   <!-- /tarjeta -->
